@@ -1,6 +1,6 @@
  const categoriesItem = [
     "backgrounds",
-    "fasion",
+    "fashion",
     "nature",
     "science",
     "education",

@@ -10,7 +10,7 @@ import ImageGrid from '../components/ImageGrid';
 import { ScrollView } from 'react-native-gesture-handler';
 import {debounce}  from 'lodash'
 
-
+let page;
 const Home = () => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState(null)
@@ -42,7 +42,23 @@ const Home = () => {
   }
 
   const handleSearch =(text)=>{
-    console.log('search text :', text)
+    setSearch(text)
+     if(text.length >2){
+      //  search for this text
+        page=1
+        setImages([]);
+        fetchImages({page, q: text})
+     }
+     if(text == ""){
+        // reset results
+      setImages([]);
+      fetchImages({page:1})
+      searchInputRef?.current.clear()
+     }
+  }
+
+  const clearSearch =()=> {
+    setSearch("")
   }
 
   const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
@@ -63,7 +79,7 @@ const Home = () => {
         />
          {
           search &&  (
-            <Pressable onPress={() => setSearch('')}>
+            <Pressable onPress={() =>handleSearch("")}>
               <Image source={Cross} style={styles.cross} />
             </Pressable>
            )
