@@ -1,9 +1,10 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { MasonryFlashList } from "@shopify/flash-list";
-import { getColoum } from '../utils/helper/common';
+import { getColoum, getImageSize } from '../utils/helper/common';
 
 const ImageGrid = ({images}) => {
+
     const coloum = getColoum()
   return (
       <View style={styles.container}>
@@ -20,13 +21,20 @@ const ImageGrid = ({images}) => {
   )
 }
 
+
+
  const ImageCard = ({item,index}) =>{
-    console.log("item",item)
+    const getImageHeight = () => {
+        let {imageHeight: height, imageWidth: width} =item;
+        return {height:getImageSize(height,width)};
+        
+    }
+    
     return(
         <View>
-            <Pressable>
+            <Pressable style={[styles.imageWrapper]}>
                 <Image 
-                    style={styles.images}
+                    style={[styles.images,getImageHeight()]}
                     source={{uri:item.webformatURL}}
                 />
             </Pressable>
@@ -40,17 +48,18 @@ const styles = StyleSheet.create({
     container: {
         minHeight: 3,
         height: "100%",
-        // width: "100%",
-        // backgroundColor: 'blue',
     },
     flashListContainer:{
         paddingHorizontal: 10,
     },
     images: {
-        height:300,
+        // height: 300,
         width: '100%',
+    },
+    imageWrapper: {
+        // borderCurve: 'continuous',
+        marginBottom:6,
+        marginHorizontal:4
     }
-
-
 
 })
