@@ -1,5 +1,5 @@
 import {Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState,useRef, useEffect } from 'react'
+import React, { useState,useRef, useEffect, useCallback } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Header from '../components/Header';
 import Search from '../assets/images/search.png'
@@ -8,6 +8,7 @@ import Categories from '../components/Categories';
 import { apiCall } from '../utils/API';
 import ImageGrid from '../components/ImageGrid';
 import { ScrollView } from 'react-native-gesture-handler';
+import {debounce}  from 'lodash'
 
 
 const Home = () => {
@@ -40,6 +41,12 @@ const Home = () => {
         setActiveCategory(cat)
   }
 
+  const handleSearch =(text)=>{
+    console.log('search text :', text)
+  }
+
+  const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
+
   return (
     <View style={[styles.container, { paddingTop }]}>
       <Header />
@@ -50,7 +57,7 @@ const Home = () => {
        
         <TextInput
           placeholder='Search for photos..'
-          onChangeText={text => setSearch(text)}
+          onChangeText={handleTextDebounce}
           ref={searchInputRef}
           style={styles.searchInput}
         />
