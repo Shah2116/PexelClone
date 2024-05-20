@@ -36,6 +36,7 @@ const ImageGrid = ({images}) => {
                 <Image 
                     style={[styles.images,getImageHeight()]}
                     source={{uri:item.webformatURL}}
+                    transition={100}
                 />
             </Pressable>
         </View>
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
     container: {
         minHeight: 3,
         height: "100%",
+        backgroundColor: '#fff'
     },
     flashListContainer:{
         paddingHorizontal: 10,
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
     images: {
         // height: 300,
         width: '100%',
+        borderRadius: 20
     },
     imageWrapper: {
         // borderCurve: 'continuous',

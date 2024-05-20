@@ -7,6 +7,7 @@ import Cross from '../assets/images/cross.png'
 import Categories from '../components/Categories';
 import { apiCall } from '../utils/API';
 import ImageGrid from '../components/ImageGrid';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const Home = () => {
@@ -42,9 +43,8 @@ const Home = () => {
   return (
     <View style={[styles.container, { paddingTop }]}>
       <Header />
-
       {/* Search Bar */}
-
+      <ScrollView>
       <View style={styles.searchBox}>
         <Image source={Search} style={styles.searchIcon} />
        
@@ -62,6 +62,7 @@ const Home = () => {
            )
         }
       </View>
+
       {/* Categories Components */}
       <View>
       <Categories 
@@ -69,10 +70,12 @@ const Home = () => {
         handleChangeCategory={handleChangeCategory}
       />
       </View>
+
       {/* Image Grid */}
       {
         images.length>0 && <ImageGrid images={images}/>
       }
+      </ScrollView>
     </View>
   )
 }
