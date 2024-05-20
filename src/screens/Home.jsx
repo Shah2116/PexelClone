@@ -1,24 +1,43 @@
 import {Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState,useRef } from 'react'
+import React, { useState,useRef, useEffect } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Header from '../components/Header';
 import Search from '../assets/images/search.png'
 import Cross from '../assets/images/cross.png'
 import Categories from '../components/Categories';
+import { apiCall } from '../utils/API';
+import ImageGrid from '../components/ImageGrid';
 
 
 const Home = () => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState(null)
+  const [images, setImages] = useState([])
 
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
   const paddingTop = top > 0 ? top + 10 : 30;
 
+  useEffect(()=> {
+    fetchImages()
+  },[])
+
+      
+  const fetchImages = async (params = { page: 1 }, append = true) => {
+    const response = await apiCall(params)
+    if (response.success && response?.data?.hits) {
+      if (append) {
+        // console.log("response:", response.data?.hits)
+        setImages([...images, response.data?.hits])
+      }
+      setImages([...response.data?.hits])
+    }
+    
+  }
+
   const handleChangeCategory= (cat)=>{
         setActiveCategory(cat)
   }
-  console.log('active category', activeCategory)
 
   return (
     <View style={[styles.container, { paddingTop }]}>
@@ -50,6 +69,10 @@ const Home = () => {
         handleChangeCategory={handleChangeCategory}
       />
       </View>
+      {/* Image Grid */}
+      {
+        images.length>0 && <ImageGrid images={images}/>
+      }
     </View>
   )
 }
@@ -82,5 +105,8 @@ const styles = StyleSheet.create({
     cross: {
       height: 22,
       width: 22,
+    },
+    imageLayout: {
+      flex:1,
     }
 })
