@@ -39,6 +39,7 @@ const Home = () => {
 
   const handleChangeCategory= (cat)=>{
         setActiveCategory(cat)
+        searchInputRef?.current.clear()
         clearSearch();
         setImages([]);
         page=1;
