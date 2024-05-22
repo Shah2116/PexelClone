@@ -39,6 +39,13 @@ const Home = () => {
 
   const handleChangeCategory= (cat)=>{
         setActiveCategory(cat)
+        clearSearch();
+        setImages([]);
+        page=1;
+        let params ={page}
+        if(cat)
+          params.category	= cat;
+        fetchImages(params, false)
   }
 
   const handleSearch =(text)=>{
@@ -47,12 +54,14 @@ const Home = () => {
       //  search for this text
         page=1
         setImages([]);
-        fetchImages({page, q: text})
+        setActiveCategory(null)  //clear category when search
+        fetchImages({page, q: text},false)
      }
      if(text == ""){
         // reset results
       setImages([]);
-      fetchImages({page:1})
+      fetchImages({page:1},false)
+      setActiveCategory(null) //clear category when search
       searchInputRef?.current.clear()
      }
   }
