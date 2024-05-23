@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     container: {
         minHeight: 3,
         height: "100%",
-        backgroundColor: '#fff'
+        // backgroundColor: '#fff'
     },
     flashListContainer:{
         paddingHorizontal: 10,

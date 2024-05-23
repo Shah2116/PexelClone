@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 import BarIcon from 'react-native-vector-icons/FontAwesome6'
 
 
-const Header = () => {
+const Header = ({openFilterModal}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pixels</Text>
-      <BarIcon name='bars-staggered' size={22} color={'#000'}/>
+      <Pressable onPress={openFilterModal}>
+        <BarIcon name='bars-staggered' size={22} color={'#000'} />
+      </Pressable>
     </View>
   )
 }

@@ -9,6 +9,7 @@ import { apiCall } from '../utils/API';
 import ImageGrid from '../components/ImageGrid';
 import { ScrollView } from 'react-native-gesture-handler';
 import {debounce}  from 'lodash'
+import FilterModal from '../components/FilterModal';
 
 let page;
 const Home = () => {
@@ -18,6 +19,8 @@ const Home = () => {
 
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
+  const bottomSheetModalRef = useRef(null);
+
   const paddingTop = top > 0 ? top + 10 : 30;
 
   useEffect(()=> {
@@ -71,11 +74,18 @@ const Home = () => {
     setSearch("")
   }
 
+  const openFilterModal=()=>{
+    bottomSheetModalRef?.current?.present()
+  }
+  const closeFilterModal=()=>{
+    bottomSheetModalRef?.current?.close()
+  }
+
   const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
 
   return (
     <View style={[styles.container, { paddingTop }]}>
-      <Header />
+      <Header openFilterModal={openFilterModal} />
       {/* Search Bar */}
       <ScrollView>
       <View style={styles.searchBox}>
@@ -109,6 +119,8 @@ const Home = () => {
         images.length>0 && <ImageGrid images={images}/>
       }
       </ScrollView>
+      {/* Filter modal */}
+      <FilterModal bottomSheetModalRef={bottomSheetModalRef} />
     </View>
   )
 }
