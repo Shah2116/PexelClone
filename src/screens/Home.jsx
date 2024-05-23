@@ -16,6 +16,7 @@ const Home = () => {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState(null)
   const [images, setImages] = useState([])
+  const [filters, setFilters] = useState(null)
 
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
@@ -26,6 +27,16 @@ const Home = () => {
   useEffect(()=> {
     fetchImages()
   },[])
+
+  const applyFilter=() =>{
+      console.log("Applying filter")
+      closeFilterModal()
+  }
+
+  const resetFilter=() =>{
+    console.log("reset the filter")
+    closeFilterModal()
+  }
 
       
   const fetchImages = async (params = { page: 1 }, append = true) => {
@@ -120,7 +131,14 @@ const Home = () => {
       }
       </ScrollView>
       {/* Filter modal */}
-      <FilterModal bottomSheetModalRef={bottomSheetModalRef} />
+      <FilterModal
+       bottomSheetModalRef={bottomSheetModalRef} 
+        onApply={applyFilter}
+        onReset={resetFilter}
+        onClose={closeFilterModal}
+        filters={filters}
+        setFilters={setFilters}
+       />
     </View>
   )
 }

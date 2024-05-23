@@ -7,8 +7,11 @@ import {
   } from '@gorhom/bottom-sheet';
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
+import SectionView, { CommonFilterRow } from './FilterView';
+import { capitazile, captazile } from '../utils/helper/common';
+import { data } from '../assets/data/categoriesItem';
 
-const FilterModal = ({bottomSheetModalRef}) => {
+const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onReset}) => {
 
     const snapPoints = useMemo(() => ['75%'], []);
 
@@ -22,16 +25,44 @@ const FilterModal = ({bottomSheetModalRef}) => {
         //   onChange={handleSheetChanges}
       >
           <BottomSheetView style={styles.contentContainer}>
-              <Text>Awesome 🎉</Text>
+              <View style={styles.content}>
+                <Text style={styles.filterText}>Filters</Text>
+                {
+                  Object.keys(sections).map((sectionName, index) => {
+                    let sectionView = sections[sectionName];
+                    let title = capitazile(sectionName)
+                    let sectionData = data.filter[sectionName]
+                    return (
+                      <View key={sectionName}>
+                      <SectionView
+                      title={title} 
+                      content={sectionView({
+                        data:sectionData,
+                        filters,
+                        setFilters,
+                        filterName: sectionName
+                      })}
+                      />
+                      </View>
+                    )
+                  })
+                }
+              </View>
           </BottomSheetView>
       </BottomSheetModal>
   )
 }
 
+const sections = {
+  "order": (props) => <CommonFilterRow {...props} />, 
+  "orientation": (props) => <CommonFilterRow {...props} />,
+  "type": (props) => <CommonFilterRow {...props}/>,
+  "colors": (props) => <CommonFilterRow {...props}/>,
+}
 
 const customBackdrop=({animatedIndex, style})=>{
 
-
+    // for filterModal smoth drop down
   const containerAnimatedStyle = useAnimatedStyle(() => {
     let opacity = interpolate(
       animatedIndex.value,
@@ -65,7 +96,6 @@ const customBackdrop=({animatedIndex, style})=>{
 }
 
 
-
 export default FilterModal
 
 const styles = StyleSheet.create({
@@ -81,5 +111,13 @@ const styles = StyleSheet.create({
       },
       overlay:{
         backgroundColor: 'rgba(0,0,0,0.5)'
-      }
+      },
+      content:{
+        flex:1,
+        width: '100%',
+        padding: 20,
+      },
+      filterText:{
+        fontSize: 50,
+      },
 })
