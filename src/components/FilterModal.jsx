@@ -7,7 +7,7 @@ import {
   } from '@gorhom/bottom-sheet';
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
-import SectionView, { CommonFilterRow } from './FilterView';
+import SectionView, { ColorFilterRow, CommonFilterRow } from './FilterView';
 import { capitazile, captazile } from '../utils/helper/common';
 import { data } from '../assets/data/categoriesItem';
 
@@ -57,7 +57,7 @@ const sections = {
   "order": (props) => <CommonFilterRow {...props} />, 
   "orientation": (props) => <CommonFilterRow {...props} />,
   "type": (props) => <CommonFilterRow {...props}/>,
-  "colors": (props) => <CommonFilterRow {...props}/>,
+  "colors": (props) => <ColorFilterRow {...props}/>,
 }
 
 const customBackdrop=({animatedIndex, style})=>{

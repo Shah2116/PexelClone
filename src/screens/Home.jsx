@@ -94,6 +94,9 @@ const Home = () => {
 
   const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
 
+
+  console.log("filters:",filters)
+
   return (
     <View style={[styles.container, { paddingTop }]}>
       <Header openFilterModal={openFilterModal} />

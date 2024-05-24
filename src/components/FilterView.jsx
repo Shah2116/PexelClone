@@ -41,6 +41,33 @@ const SectionView=({title,content})=>{
       )
   }
 
+  export const ColorFilterRow=({data,filterName,filters,setFilters})=>{
+
+    const onSelect=(item) =>{
+        setFilters({...filters,[filterName]:item})
+    }    
+      return (
+          <View style={styles.flexWrapRow}>
+              {
+                  data && data.map((item) => {
+                      let isActive = filters && filters[filterName] == item;
+                      let activeBorderColor = isActive ? "#000" : "#fff";
+                      return (
+                          <Pressable
+                              key={item}
+                              onPress={() => onSelect(item)}
+                          >
+                          <View style={[styles.colorBtnWrapper,{borderColor:activeBorderColor}]}>
+                                <View style={[styles.color,{backgroundColor:item}]}/>
+                          </View>
+                          </Pressable>
+                      )
+                  })
+              }
+          </View>
+      )
+  }
+
 
   export default SectionView;
 
@@ -65,6 +92,17 @@ const styles = StyleSheet.create({
     },
     outlinedButtonText:{
 
+    },
+    colorBtnWrapper: {
+        padding: 3,
+        borderWidth:2,
+        borderRadius:10,
+        borderCurve: 'continuous',
+    },
+    color: {
+        height:30,
+        width:40,
+        borderRadius:10,
     },
 
 })
