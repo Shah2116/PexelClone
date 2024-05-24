@@ -1,4 +1,4 @@
-import {Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import {ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState,useRef, useEffect, useCallback } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Header from '../components/Header';
@@ -161,6 +161,11 @@ const Home = () => {
       {
         images.length>0 && <ImageGrid images={images}/>
       }
+
+      {/* loader */}
+      <View style={{marginBottom:70,marginTop: images.length>0 ? 10: 70 }}>
+        <ActivityIndicator size='large' />
+      </View>
       </ScrollView>
       {/* Filter modal */}
       <FilterModal
