@@ -29,12 +29,41 @@ const Home = () => {
   },[])
 
   const applyFilter=() =>{
-      console.log("Applying filter")
+    if(filters){
+       page =1
+       setImages([])
+      let params ={
+        page,
+        ...filters
+      }
+      if(activeCategory){
+        params.category = activeCategory
+      }
+      if(search){
+        params.q = search
+      }
+    fetchImages(params,false)
+    }
       closeFilterModal()
   }
 
-  const resetFilter=() =>{
-    console.log("reset the filter")
+  const resetFilter = () => {
+    if (filters) {
+      page = 1
+      setFilters(null)
+      setImages([])
+      let params = {
+        page,
+      }
+      if (activeCategory) {
+        params.category = activeCategory
+      }
+      if (search) {
+        params.q = search
+      }
+      fetchImages(params, false)
+    }
+    
     closeFilterModal()
   }
 
@@ -57,7 +86,7 @@ const Home = () => {
         clearSearch();
         setImages([]);
         page=1;
-        let params ={page}
+        let params ={page,...filters}
         if(cat)
           params.category	= cat;
         fetchImages(params, false)
@@ -70,7 +99,7 @@ const Home = () => {
         page=1
         setImages([]);
         setActiveCategory(null)  //clear category when search
-        fetchImages({page, q: text},false)
+        fetchImages({page, ...filters, q: text},false)
      }
      if(text == ""){
         // reset results

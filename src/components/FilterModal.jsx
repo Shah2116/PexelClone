@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useMemo } from 'react'
 import { BlurView } from "@react-native-community/blur";
 import {
@@ -8,7 +8,7 @@ import {
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 import SectionView, { ColorFilterRow, CommonFilterRow } from './FilterView';
-import { capitazile, captazile } from '../utils/helper/common';
+import { capitazile} from '../utils/helper/common';
 import { data } from '../assets/data/categoriesItem';
 
 const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onReset}) => {
@@ -47,6 +47,17 @@ const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onR
                     )
                   })
                 }
+                {/* Filter action button */}
+                <View style={styles.buttonContainer}>
+                  <Pressable style={[styles.button,{backgroundColor:'White',borderWidth:2}]}
+                  onPress={onReset}>
+                      <Text style={[styles.resetBtn,]}>Reset</Text>
+                  </Pressable>
+                  <Pressable style={[styles.button]}
+                  onPress={onApply}>
+                      <Text style={[styles.resetBtn,{color:'white'}]}>Apply</Text>
+                  </Pressable>
+                </View>
               </View>
           </BottomSheetView>
       </BottomSheetModal>
@@ -119,5 +130,24 @@ const styles = StyleSheet.create({
       },
       filterText:{
         fontSize: 50,
+      },
+      buttonContainer:{
+        flex:1,
+        flexDirection: 'row',
+        alignItems:'center',
+        gap:10,
+      },
+      button:{
+        flex:1,
+        padding:10,
+        justifyContent:'center',
+        alignItems:"center",
+        borderRadius:10,
+        borderCurve:'continuous',
+        backgroundColor:'brown'
+      },
+      resetBtn: {
+        fontSize: 18,
+        fontWeight:'500',
       },
 })
