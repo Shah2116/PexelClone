@@ -5,7 +5,7 @@ import {
     BottomSheetModal,
     BottomSheetView,
   } from '@gorhom/bottom-sheet';
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { Extrapolation, FadeInDown, interpolate, useAnimatedStyle } from 'react-native-reanimated';
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 import SectionView, { ColorFilterRow, CommonFilterRow } from './FilterView';
 import { capitazile} from '../utils/helper/common';
@@ -33,7 +33,9 @@ const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onR
                     let title = capitazile(sectionName)
                     let sectionData = data.filter[sectionName]
                     return (
-                      <View key={sectionName}>
+                      <Animated.View 
+                      entering={FadeInDown.delay((index*100)+100).springify().damping(11)}
+                      key={sectionName}>
                       <SectionView
                       title={title} 
                       content={sectionView({
@@ -43,12 +45,14 @@ const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onR
                         filterName: sectionName
                       })}
                       />
-                      </View>
+                      </Animated.View>
                     )
                   })
                 }
                 {/* Filter action button */}
-                <View style={styles.buttonContainer}>
+                <Animated.View 
+                 entering={FadeInDown.delay((500)).springify().damping(11)}
+                style={styles.buttonContainer}>
                   <Pressable style={[styles.button,{backgroundColor:'White',borderWidth:2}]}
                   onPress={onReset}>
                       <Text style={[styles.resetBtn,]}>Reset</Text>
@@ -57,7 +61,7 @@ const FilterModal = ({bottomSheetModalRef,filters,setFilters,onClose,onApply,onR
                   onPress={onApply}>
                       <Text style={[styles.resetBtn,{color:'white'}]}>Apply</Text>
                   </Pressable>
-                </View>
+                </Animated.View>
               </View>
           </BottomSheetView>
       </BottomSheetModal>

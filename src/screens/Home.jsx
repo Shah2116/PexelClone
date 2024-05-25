@@ -11,6 +11,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import {debounce}  from 'lodash'
 import FilterModal from '../components/FilterModal';
 
+
 let page;
 const Home = () => {
   const [search, setSearch] = useState('')
@@ -121,6 +122,22 @@ const Home = () => {
     bottomSheetModalRef?.current?.close()
   }
 
+  const closeApplyFilters=(filterName)=>{
+    let filterz = {...filters}
+    delete filterz[filterName]
+    setFilters({...filterz})
+    page=1
+    setImages([])
+    let params={
+      page,
+      ...filterz,
+    }
+    if(activeCategory) params.category = activeCategory
+    if(search) params.q = search
+    fetchImages(params,false)
+
+  }
+
   const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
 
 
@@ -155,6 +172,43 @@ const Home = () => {
         activeCategory={activeCategory}
         handleChangeCategory={handleChangeCategory}
       />
+      </View>
+
+      {/* applied filter  */}
+
+      <View>
+        {
+          filters && (
+            <ScrollView contentContainerStyle={styles.filter} horizontal showsHorizontalScrollIndicator={false}>
+                  {
+                    Object.keys(filters).map((key,index) => {
+                      return(
+                        <View key={key} style={styles.filterWrap}>
+                            {
+                              key === "colors"? (
+                                  <View style={{
+                                    height:20,
+                                    width:30,
+                                    borderRadius:4,
+                                    backgroundColor: filters[key],
+                                    marginHorizontal:6
+                                  }} />
+                              ) : (
+                                <Text style={styles.filterItem}>{filters[key]}</Text>
+                              )
+                            }                           
+                            <Pressable 
+                            onPress={() =>closeApplyFilters(key)}
+                            style={styles.filterIconContainer}>
+                              <Image source={Cross} style={[styles.filterIcon]} />
+                            </Pressable>
+                        </View>
+                      )
+                    })
+                  }
+            </ScrollView>
+          )
+        }
       </View>
 
       {/* Image Grid */}
@@ -211,5 +265,32 @@ const styles = StyleSheet.create({
     },
     imageLayout: {
       flex:1,
+    },
+    filter: {
+      paddingLeft: 16,
+      paddingBottom: 12,
+      gap:10,
+        },
+    filterWrap: {
+      flexDirection: 'row',
+      backgroundColor: '#d3f2e3',
+      padding:6,
+      borderRadius:10,
+      borderCurve: 'continuous',
+      justifyContent:'center',
+      alignItems:'center',
+    },
+    filterItem: {
+      paddingHorizontal:4
+    },
+    filterIconContainer:{
+      flex:1,
+      padding:2,
+      backgroundColor:'#7cd8aa',
+      borderRadius: 4
+    },
+    filterIcon : {
+      height:16,
+      width:16,
     }
 })
