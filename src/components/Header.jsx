@@ -4,10 +4,13 @@ import React from 'react'
 import BarIcon from 'react-native-vector-icons/FontAwesome6'
 
 
-const Header = ({openFilterModal}) => {
+const Header = ({openFilterModal,handleScrollUp}) => {
+
   return (
     <View style={styles.container}>
+    <Pressable onPress={handleScrollUp}>
       <Text style={styles.title}>Pixels</Text>
+    </Pressable>
       <Pressable onPress={openFilterModal}>
         <BarIcon name='bars-staggered' size={22} color={'#000'} />
       </Pressable>

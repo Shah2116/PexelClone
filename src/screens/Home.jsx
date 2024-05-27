@@ -10,6 +10,8 @@ import ImageGrid from '../components/ImageGrid';
 import { ScrollView } from 'react-native-gesture-handler';
 import {debounce}  from 'lodash'
 import FilterModal from '../components/FilterModal';
+import Animated from 'react-native-reanimated';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 let page;
@@ -18,10 +20,13 @@ const Home = () => {
   const [activeCategory, setActiveCategory] = useState(null)
   const [images, setImages] = useState([])
   const [filters, setFilters] = useState(null)
+  const [isReachedEnd, setIsReachedEnd] = useState(null)
 
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
   const bottomSheetModalRef = useRef(null);
+  const scrollRef = useRef(null);
+  const navigation = useNavigation()
 
   const paddingTop = top > 0 ? top + 10 : 30;
 
@@ -70,6 +75,7 @@ const Home = () => {
 
       
   const fetchImages = async (params = { page: 1 }, append = true) => {
+    console.log("params :", params, append)
     const response = await apiCall(params)
     if (response.success && response?.data?.hits) {
       if (append) {
@@ -140,96 +146,132 @@ const Home = () => {
 
   const handleTextDebounce = useCallback(debounce(handleSearch,500),[])
 
+  const handleScroll =(event)=>{
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+    const scrollOffset = event.nativeEvent.contentOffset.y;
+    const bottomPosition = contentHeight-scrollViewHeight;
+
+    if (scrollOffset >= bottomPosition - 1) {
+      if (!isReachedEnd) {
+        setIsReachedEnd(true);
+        console.log("last page:",page)
+        let page =1;
+        ++page;
+        console.log("last page:",page)
+        let params = {
+          page,
+          ...filters
+        }
+        if (activeCategory) params.category = activeCategory;
+        if (search) params.q = search;
+        fetchImages(params, true)
+        console.log("reached end")
+      } else if (isReachedEnd) {
+        setIsReachedEnd(false);
+      }
+    }
+  }
+
+  const handleScrollUp=()=>{
+    scrollRef?.current?.scrollTo({
+      y:0,
+      Animated: true,
+    })
+  }
 
   console.log("filters:",filters)
 
   return (
     <View style={[styles.container, { paddingTop }]}>
-      <Header openFilterModal={openFilterModal} />
+      <Header openFilterModal={openFilterModal} handleScrollUp={handleScrollUp} />
       {/* Search Bar */}
-      <ScrollView>
-      <View style={styles.searchBox}>
-        <Image source={Search} style={styles.searchIcon} />
-       
-        <TextInput
-          placeholder='Search for photos..'
-          onChangeText={handleTextDebounce}
-          ref={searchInputRef}
-          style={styles.searchInput}
-        />
-         {
-          search &&  (
-            <Pressable onPress={() =>handleSearch("")}>
-              <Image source={Cross} style={styles.cross} />
-            </Pressable>
-           )
-        }
-      </View>
+      <ScrollView
+        onScroll={handleScroll}
+        scrollEventThrottle={5}  // how often scroll will fire while scrolling
+        ref={scrollRef}
+        contentContainerStyle={{ gap: 15 }}
+      >
+        <View style={styles.searchBox}>
+          <Image source={Search} style={styles.searchIcon} />
 
-      {/* Categories Components */}
-      <View>
-      <Categories 
-        activeCategory={activeCategory}
-        handleChangeCategory={handleChangeCategory}
-      />
-      </View>
+          <TextInput
+            placeholder='Search for photos..'
+            onChangeText={handleTextDebounce}
+            ref={searchInputRef}
+            style={styles.searchInput}
+          />
+          {
+            search && (
+              <Pressable onPress={() => handleSearch("")}>
+                <Image source={Cross} style={styles.cross} />
+              </Pressable>
+            )
+          }
+        </View>
+        {/* Categories Components */}
+        <View>
+          <Categories
+            activeCategory={activeCategory}
+            handleChangeCategory={handleChangeCategory}
+          />
+        </View>
+        {/* applied filter  */}
+        <View>
+          {
+            filters && (
+              <ScrollView contentContainerStyle={styles.filter} horizontal showsHorizontalScrollIndicator={false}>
+                {
+                  Object.keys(filters).map((key, index) => {
+                    return (
+                      <View key={key} style={styles.filterWrap}>
+                        {
+                          key === "colors" ? (
+                            <View style={{
+                              height: 20,
+                              width: 30,
+                              borderRadius: 4,
+                              backgroundColor: filters[key],
+                              marginHorizontal: 6
+                            }} />
+                          ) : (
+                            <Text style={styles.filterItem}>{filters[key]}</Text>
+                          )
+                        }
+                        <Pressable
+                          onPress={() => closeApplyFilters(key)}
+                          style={styles.filterIconContainer}>
+                          <Image source={Cross} style={[styles.filterIcon]} />
+                        </Pressable>
+                      </View>
+                    )
+                  })
+                }
+              </ScrollView>
+            )
+          }
+        </View>
 
-      {/* applied filter  */}
-
-      <View>
+        {/* Image Grid */}
         {
-          filters && (
-            <ScrollView contentContainerStyle={styles.filter} horizontal showsHorizontalScrollIndicator={false}>
-                  {
-                    Object.keys(filters).map((key,index) => {
-                      return(
-                        <View key={key} style={styles.filterWrap}>
-                            {
-                              key === "colors"? (
-                                  <View style={{
-                                    height:20,
-                                    width:30,
-                                    borderRadius:4,
-                                    backgroundColor: filters[key],
-                                    marginHorizontal:6
-                                  }} />
-                              ) : (
-                                <Text style={styles.filterItem}>{filters[key]}</Text>
-                              )
-                            }                           
-                            <Pressable 
-                            onPress={() =>closeApplyFilters(key)}
-                            style={styles.filterIconContainer}>
-                              <Image source={Cross} style={[styles.filterIcon]} />
-                            </Pressable>
-                        </View>
-                      )
-                    })
-                  }
-            </ScrollView>
-          )
+          images.length > 0 && <ImageGrid images={images} navigation={navigation} />
         }
-      </View>
 
-      {/* Image Grid */}
-      {
-        images.length>0 && <ImageGrid images={images}/>
-      }
-
-      {/* loader */}
-      <View style={{marginBottom:70,marginTop: images.length>0 ? 10: 70 }}>
-        <ActivityIndicator size='large' />
-      </View>
+        {/* loader */}
+    
+        <View style={{ marginBottom:70, marginTop: images.length > 0 ? 10 : 70,}}>
+          <ActivityIndicator size='large' color={'black'} />
+        </View>
       </ScrollView>
       {/* Filter modal */}
       <FilterModal
-       bottomSheetModalRef={bottomSheetModalRef} 
+        bottomSheetModalRef={bottomSheetModalRef}
         onApply={applyFilter}
         onReset={resetFilter}
         onClose={closeFilterModal}
         filters={filters}
         setFilters={setFilters}
-       />
+      />
     </View>
   )
 }

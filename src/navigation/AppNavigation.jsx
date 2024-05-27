@@ -7,6 +7,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import Image from '../screens/Image'
 
 const Stack = createStackNavigator()
 
@@ -21,6 +22,10 @@ const AppNavigation = () => {
         }>
           <Stack.Screen name='splash' component={Splash} />
           <Stack.Screen name='Home' component={Home} />
+          <Stack.Screen name='Image' component={Image} options={{
+          
+          }
+          } />
         </Stack.Navigator>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

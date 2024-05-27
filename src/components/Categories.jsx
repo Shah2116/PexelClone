@@ -45,14 +45,13 @@ export default Categories
 
 const styles = StyleSheet.create({
     categoriesContainer: {
-        padding: 20,
+        padding: 10,
         gap:10,
     },
     categoryItem: {
         paddingHorizontal: 10,
         borderRadius: 20,
         borderWidth: 1,
-
     },
     title: {
         fontSize: 16,
