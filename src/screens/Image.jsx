@@ -1,12 +1,13 @@
-import { Button, StyleSheet, Text, View,Image, Platform, ActivityIndicator, Pressable, PermissionsAndroid, Alert} from 'react-native'
+import { Button, StyleSheet, Text, View, Image, Platform, ActivityIndicator, Pressable, PermissionsAndroid, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { BlurView } from '@react-native-community/blur'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import Cross from 'react-native-vector-icons/Feather'
 import Download from 'react-native-vector-icons/Octicons'
-import Share from 'react-native-vector-icons/Entypo'
+import ShareIcon from 'react-native-vector-icons/Entypo'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import RNFS, { downloadFile } from 'react-native-fs';
+import Share from 'react-native-share';
 
 const ImageScreen = () => {
 
@@ -19,38 +20,58 @@ const ImageScreen = () => {
   const imageURL = uri
   const filePath = `${RNFS.DocumentDirectoryPath}/${fileName}`
 
-   const getSize =() => {
+  const getSize = () => {
     const imageWidth = route?.params?.imageWidth
     const imageHeight = route?.params?.imageHeight
     const aspectRation = imageWidth / imageHeight;
     // const maxWidth = Platform.OS == 'web' ? 500 : 200
     maxWidth = 300
-    const calculateHeight =   maxWidth/ aspectRation;
+    const calculateHeight = maxWidth / aspectRation;
     const calculateWidth = maxWidth;
-    
-    if(aspectRation < 1){  //portraite image
-        calculateWidth = calculateHeight*aspectRation
+
+    if (aspectRation < 1) {  //portraite image
+      calculateWidth = calculateHeight * aspectRation
     }
-    return{
+    return {
       width: calculateWidth,
       height: calculateHeight
     }
 
   }
-  const onLoad =() => {
+  const onLoad = () => {
     setStatus('')
   }
 
-  const handleDownloadImage = async() =>{
-      setStatus('downloading')
-     const uri =  await downloadImageFile()
-     if(uri){
+  const handleDownloadImage = async () => {
+    setStatus('downloading')
+    const uri = await downloadImageFile()
+    if (uri) {
       console.log("Image Downloaded")
-     }
+    }
   }
-   
-  const handleShareImage =async () => {
 
+  const handleShareImage = async () => {
+    setStatus('sharing')
+    try {
+      // const uri = await downloadImageFile()
+      // if(uri){
+      //   const options = {
+      //     uri : uri
+      //   }
+      // }
+      // Ensure the file exists before trying to share
+      await RNFS.writeFile(filePath, 'This is a sample file.', 'utf8');
+      const options = {
+        url: `file://${filePath}`,
+      };
+      Share.open(options)
+      setStatus('')
+      console.log("file shared successfully:", options)
+
+    } catch (error) {
+      console.log("got error:", error.message)
+      return null;
+    }
   }
 
   //  downloading local image 
@@ -70,6 +91,7 @@ const ImageScreen = () => {
     }
   }
 
+
   return (
     <View
       style={styles.container}
@@ -79,28 +101,28 @@ const ImageScreen = () => {
     >
 
       <View>
-       <View style={styles.loading}>
-        {
-          status == 'loading' && <ActivityIndicator size={'large'} color={'white'} />
-        }
-       </View>
-        <Image 
-        source={{uri:uri}} 
-        style={[styles.image]}
-        onLoad={onLoad}
+        <View style={styles.loading}>
+          {
+            status == 'loading' && <ActivityIndicator size={'large'} color={'white'} />
+          }
+        </View>
+        <Image
+          source={{ uri: uri }}
+          style={[styles.image]}
+          onLoad={onLoad}
         />
       </View>
       <View style={styles.button}>
-      <Animated.View style={styles.buttonIcon}>
-        <Pressable
-        onPress={() => navigation.goBack()}>
-          <Cross name='x' size={30} color={'white'} />
-        </Pressable>
-      </Animated.View>
-      <Animated.View style={styles.buttonIcon}>
+        <Animated.View style={styles.buttonIcon}>
+          <Pressable
+            onPress={() => navigation.goBack()}>
+            <Cross name='x' size={30} color={'white'} />
+          </Pressable>
+        </Animated.View>
+        <Animated.View style={styles.buttonIcon}>
           {
             status == 'downloading' ? (
-              <View style={[styles.button,{marginBottom:22}]}>
+              <View style={[styles.button, { marginBottom: 22 }]}>
                 <ActivityIndicator size={'large'} color={'white'} />
               </View>
             ) : (
@@ -109,13 +131,22 @@ const ImageScreen = () => {
               </Pressable>
             )
           }
-        
-      </Animated.View>
-      <Animated.View style={styles.buttonIcon}>
-        <Pressable onPress={handleShareImage}>
-          <Share name='share' size={30} color={'white'}/>
-        </Pressable>
-      </Animated.View>
+
+        </Animated.View>
+        <Animated.View style={styles.buttonIcon}>
+          {
+            status == 'sharing' ? (
+              <View style={[styles.button, { marginBottom: 22 }]}>
+                <ActivityIndicator size={'large'} color={'white'} />
+              </View>
+            ) : (
+              <Pressable onPress={handleShareImage}>
+                <ShareIcon name='share' size={30} color={'white'} />
+              </Pressable>
+            )
+          }
+
+        </Animated.View>
       </View>
     </View>
   )
@@ -132,7 +163,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 300,
-    height:200,
+    height: 200,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: 'rgba(225,225,225, 0.1)',
@@ -146,15 +177,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    marginTop:35,
+    marginTop: 35,
     flexDirection: 'row',
-    justifyContent:'center',
-    alignItems:'center',
-    gap:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
   },
   buttonIcon: {
-    height:60,
-    width:60,
+    height: 60,
+    width: 60,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(225,225,225,0.2)',
