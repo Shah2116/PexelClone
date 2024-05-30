@@ -1,4 +1,4 @@
- const categoriesItem = [
+ const categoriesItem:string[]= [
     "backgrounds",
     "fashion",
     "nature",
@@ -20,8 +20,15 @@
     "business",
     "music"
 ]
+ interface Filter {
+    order: string[];
+    orientation: string[],
+    type: string[];
+    colors: string[];
+ }
 
-const filter = {
+ 
+const filter:Filter = {
     order:["popular", "latest"],
     orientation: ["horizontal","vertical"],
     type: ["photo", "illustration", "vector"],
